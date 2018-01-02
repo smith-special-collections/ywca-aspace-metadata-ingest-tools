@@ -45,7 +45,7 @@ def importSheet(sheetUrl, path, mapping):
     # Open the Google sheet csv
     reader = googlecsv.getCsv(sheetUrl)
     # Initialize the sheet processor
-    sheet = SheetProcessor(reader, uniquecolumns=['id', 'batch id'], idcolumn='batch id')
+    sheet = SheetProcessor(reader, uniquecolumns=['authority id', 'batch id'], idcolumn='batch id')
     # Apply the json mapping
     aspace.setJsonSerializerDefault(jfm.customJsonSerial)
     # Process the records
