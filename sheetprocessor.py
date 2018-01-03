@@ -2,8 +2,6 @@ import pdb
 import itertools
 import logging
 
-DEBUG_MODE = False
-
 class SheetProcessor:
     """Routines for processing a sheet and doing something with
     the rows.
@@ -79,6 +77,7 @@ class SheetProcessor:
         self.uniqueColumns = uniquecolumns
         self.idColumn = idcolumn
         
+        self.debugMode = False
         self.__rowNumber = 0
         self.__errorCount = 0
         self.__successCount = 0
@@ -150,7 +149,7 @@ class SheetProcessor:
             except:
                 self.incrementErrorCount()
                 self.addFailedRecord()
-                if DEBUG_MODE is True:
+                if self.debugMode is True:
                     raise
             else:
                 # if all goes well increment the successCount

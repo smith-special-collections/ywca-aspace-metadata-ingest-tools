@@ -38,5 +38,5 @@ myPersonAgent = {
     }],
 }
 
-#importSheet(corperateAgentsCsvUrl, '/agents/corporate_entities', myCorperateAgent)
-importSheet(personalAgentsCsvUrl, '/agents/people', myPersonAgent)
+importSheet(corperateAgentsCsvUrl, '/agents/corporate_entities', myCorperateAgent)
+#importSheet(personalAgentsCsvUrl, '/agents/people', myPersonAgent)

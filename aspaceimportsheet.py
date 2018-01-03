@@ -9,7 +9,8 @@ import pprint
 # Set up logging
 import datetime
 logfileName = 'logs/aspace-import-%s.log' % datetime.datetime.now().isoformat()
-logging.basicConfig(format='%(levelname)s|%(asctime)s|%(message)s', level=logging.INFO, filename=logfileName)
+#, filename=logfileName
+logging.basicConfig(format='%(levelname)s|%(asctime)s|%(message)s', level=logging.INFO)
 logging.getLogger("requests").setLevel(logging.WARNING) # Suppress oververbosity of requests logging
 logging.getLogger("urllib3").setLevel(logging.WARNING) # Same for urllib3 used by requests
 
@@ -48,5 +49,7 @@ def importSheet(sheetUrl, path, mapping):
     sheet = SheetProcessor(reader, uniquecolumns=['authority id', 'batch id'], idcolumn='batch id')
     # Apply the json mapping
     aspace.setJsonSerializerDefault(jfm.customJsonSerial)
+    # Set debug mode on processor
+    sheet.debugMode = True
     # Process the records
     sheet.process(asImportRecord, path=path, mapping=mapping)
