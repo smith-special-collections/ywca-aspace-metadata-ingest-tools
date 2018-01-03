@@ -1,4 +1,4 @@
-from aspy import aspy
+from archivesspace import archivesspace
 from googlecsv import googlecsv
 from sheetprocessor import SheetProcessor
 import jsonfieldmapper as jfm
@@ -14,7 +14,7 @@ logging.getLogger("requests").setLevel(logging.WARNING) # Suppress oververbosity
 logging.getLogger("urllib3").setLevel(logging.WARNING) # Same for urllib3 used by requests
 
 # Connect to ArchivesSpace
-aspace = aspy.ArchivesSpace('http', 'localhost', '8089', 'tchambers', 'sctchambers')
+aspace = archivesspace.ArchivesSpace('http', 'localhost', '8089', 'tchambers', 'sctchambers')
 aspace.connect()
 
 def asImportRecord(row, path='', mapping={}):
