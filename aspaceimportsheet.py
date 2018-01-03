@@ -9,8 +9,7 @@ import pprint
 # Set up logging
 import datetime
 logfileName = 'logs/aspace-import-%s.log' % datetime.datetime.now().isoformat()
-# , filename=logfileName
-logging.basicConfig(format='%(levelname)s|%(asctime)s|%(message)s', level=logging.INFO)
+logging.basicConfig(format='%(levelname)s|%(asctime)s|%(message)s', level=logging.INFO, filename=logfileName)
 logging.getLogger("requests").setLevel(logging.WARNING) # Suppress oververbosity of requests logging
 logging.getLogger("urllib3").setLevel(logging.WARNING) # Same for urllib3 used by requests
 
@@ -18,7 +17,7 @@ logging.getLogger("urllib3").setLevel(logging.WARNING) # Same for urllib3 used b
 aspace = aspy.ArchivesSpace('http', 'localhost', '8089', 'tchambers', 'sctchambers')
 aspace.connect()
 
-def asImportRecord(row, path='', mapping={}, mapper=None):
+def asImportRecord(row, path='', mapping={}):
     """This is the callback function to be run by the sheet processor on each row."""
     # Run the magic sauce to make the mappings pull from the input row from the csv
     jfm.setSourceRecord(row['data'])

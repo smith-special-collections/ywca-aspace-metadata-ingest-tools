@@ -5,15 +5,12 @@ Use jsonfieldmapper to map data from a source row to a json datastructure.
 Example:
 
 >>> import json
->>> import jsonfieldmapper
+>>> import jsonfieldmapper as jfm
 >>> 
->>> class MyColumn(jsonfieldmapper.Column):
-...     pass
->>>
 >>> myTemplate = {
 ...     # The name of the column in the input data is passed to the Column
 ...     # instance
-...     'primary_name': MyColumn('myName'), 
+...     'primary_name': jfm.Column('myName'), 
 ...     'myconstant': 'foobar'
 ... }
 >>> 
@@ -32,7 +29,7 @@ Input data comes onto the scene
 ...     'myName': 'Tristan Chambers'
 ... }
 >>> 
->>> jsonfieldmapper.JsonMappingObject.dit(fakeRow)
+>>> jfm.setSourceRecord(fakeRow)
 
 Now all instances of the Column class resolves to the value addressed from
 the input data
@@ -46,7 +43,7 @@ Tristan Chambers
 And they render correctly when we serialize with json.dumps
 _if_ we pass the custom serializer for Column() included with this module.
 
->>> json.dumps(myTemplate, default=jsonfieldmapper.customJsonSerial, sort_keys=True)
+>>> json.dumps(myTemplate, default=jfm.customJsonSerial, sort_keys=True)
 '{"myconstant": "foobar", "primary_name": "Tristan Chambers"}'
 
 """
@@ -67,12 +64,6 @@ class JsonMappingObject():
     def __repr__(self):
         return self.renderValue()
 
-    def dit(sourceRecord):
-        """Make all instances of Column magically aware of the current source
-        record.
-        """
-        Column.sourceRecord = sourceRecord
-
 class Column(JsonMappingObject):
     """A mapping for columns from the input spreadsheet. Subclasses the native
     str object from Python so that json.dumps() (which is invoked by requests)
@@ -83,18 +74,16 @@ class Column(JsonMappingObject):
         self.columnName = columnName
 
     def renderValue(self):
-        if Column.sourceRecord is not None:
-            return(str(Column.sourceRecord[self.columnName]))
+        if JsonMappingObject.sourceRecord is not None:
+            return(str(JsonMappingObject.sourceRecord[self.columnName]))
         else:
             return('')
 
-    def setSourceRecord(sourceRecord):
-        """Make all instances of Column magically aware of the current source
-        record.
-        """
-        Column.sourceRecord = sourceRecord
-
-
+def setSourceRecord(sourceRecord):
+    """Make all instances of Column magically aware of the current source
+    record.
+    """
+    JsonMappingObject.sourceRecord = sourceRecord
 
 def customJsonSerial(unknownObject):
     """This runs in JSON serializer if the object isn't known to json.dumps()"""
