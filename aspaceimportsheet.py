@@ -15,7 +15,7 @@ import pprint
 import json
 
 DRY_RUN = False
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # Set up logging
 import datetime
@@ -33,6 +33,8 @@ templateEnv = jinja2.Environment( loader=templateLoader )
 if DRY_RUN is not True:
     aspace = archivesspace.ArchivesSpace('http', 'localhost', '8089', 'tchambers', 'sctchambers')
     aspace.connect()
+else:
+    logging.error('DRY RUN')
 
 def asImportRecord(row, apiPath='', mapping=''):
     """This is the callback function to be run by the sheet processor on each row."""
@@ -45,21 +47,24 @@ def asImportRecord(row, apiPath='', mapping=''):
     try:
         # The actual request to ASpace
         if DRY_RUN is not True:
-            response = aspace.requestPost(apiPath, requestData=asRecordDataStruct)# <- TODO
+            response = aspace.requestPost(apiPath, requestData=asRecordDataStruct)
             logging.info('Imported record |%s| with data |%s| with response |%s| creating new location|%s' % (row['id'], asRecordDataStruct, response, response['uri']))
         else:
+            logging.error('DRY RUN not querying %s with data: %s' % (apiPath, asRecordDataStruct))
             pass
     except Exception as e:
         # If something goes wrong log it
         logging.error('Failed record ' + str(row['id']) + ': ' + pprint.pformat(asRecordDataStruct))
         raise e
 
-def importSheet(sheetUrl, path, mapping):
+def importSheet(sheetUrl, path, mapping, linestoskip=0, uniquecolumns=[]):
     # Open the Google sheet csv
     reader = googlecsv.getCsv(sheetUrl)
     # Initialize the sheet processor
-    sheet = SheetProcessor(reader, uniquecolumns=['authority_id', 'batch_id'], idcolumn='batch_id')
+    sheet = SheetProcessor(reader, uniquecolumns=uniquecolumns, idcolumn='batch_id')
     # Set debug mode on processor
     sheet.debugMode = DEBUG_MODE
+    # Skip however may lines at the beginning of the sheet
+    sheet.linesToSkip = linestoskip
     # Process the records
     sheet.process(asImportRecord, apiPath=path, mapping=mapping)

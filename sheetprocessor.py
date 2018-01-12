@@ -78,6 +78,7 @@ class SheetProcessor:
         self.idColumn = idcolumn
         
         self.debugMode = False
+        self.linesToSkip = 0
         self.__rowNumber = 0
         self.__errorCount = 0
         self.__successCount = 0
@@ -141,7 +142,12 @@ class SheetProcessor:
         for rowData in self.reader:
             self.__currentRecord = rowData
             self.incrementRowNumber()
+            # Skip the first few lines if set
+            if self.getRowNumber() < self.linesToSkip:
+                continue
+            # Build the row data structure to be passed to the callback function
             row = {"number": self.getRowNumber(), "id": self.getCurrentRecordId(), "data": rowData}
+            # Run the callback function
             try:
                 callback(row, **kwargs)
             except KeyboardInterrupt:

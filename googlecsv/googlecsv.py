@@ -13,7 +13,7 @@ def getCsv(csvUrl):
     
     More about Python csv DictReader object: https://docs.python.org/3/library/csv.html#csv.DictReader
     """
-    request = requests.get(csvUrl, stream=True)
+    request = requests.get(csvUrl, stream=True, headers={'Cache-Control': 'no-cache'})
     # make requests read the response as utf-8 (which it is of course!)
     request.encoding = 'utf-8'
     # convert the text into a file stream thing that DictReader likes
