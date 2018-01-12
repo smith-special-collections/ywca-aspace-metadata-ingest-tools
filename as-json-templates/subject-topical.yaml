@@ -1,20 +1,26 @@
 jsonmodel_type: subject
+publish: True
+vocabulary: /vocabularies/1
+source: {{ source }}
+{% if authority_id %}
+authority_id: {{ authority_id }}
+{% endif %}
 terms:
 {% if term_1 %}
 - jsonmodel_type: term
   term: {{ term_1 }}
   term_type: {{ term_type }}
-  vocabulary: /vocabularies/156
+  vocabulary: /vocabularies/1
 {% endif %}
 {% if subdivision_1 %}
 - jsonmodel_type: term
   term: {{ subdivision_1 }}
   term_type: {{ subdivision_1_term_type }}
-  vocabulary: /vocabularies/156
+  vocabulary: /vocabularies/1
 {% endif %}
 {% if subdivision_2 %}
 - jsonmodel_type: term
   term: {{ subdivision_2 }}
   term_type: {{ subdivision_2_term_type }}
-  vocabulary: /vocabularies/156
+  vocabulary: /vocabularies/1
 {% endif %}
