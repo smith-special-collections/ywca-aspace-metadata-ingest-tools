@@ -15,7 +15,7 @@ import pprint
 import json
 
 DRY_RUN = False
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # Set up logging
 import datetime
