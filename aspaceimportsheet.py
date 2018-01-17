@@ -54,7 +54,7 @@ def asImportRecord(row, apiPath='', mapping=''):
             pass
     except Exception as e:
         # If something goes wrong log it
-        logging.error('Failed record ' + str(row['id']) + ': ' + pprint.pformat(asRecordDataStruct))
+        #logging.error('Failed record ' + str(row['id']) + ': ' + pprint.pformat(asRecordDataStruct))
         raise e
 
 def importSheet(sheetUrl, path, mapping, linestoskip=0, uniquecolumns=[]):

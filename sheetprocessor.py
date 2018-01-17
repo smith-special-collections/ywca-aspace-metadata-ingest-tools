@@ -152,9 +152,10 @@ class SheetProcessor:
                 callback(row, **kwargs)
             except KeyboardInterrupt:
                 raise
-            except:
+            except Exception as e:
                 self.incrementErrorCount()
                 self.addFailedRecord()
+                logging.error('Failed record %s: %s' % (row['id'], str(e)))
                 if self.debugMode is True:
                     raise
             else:
