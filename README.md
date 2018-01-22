@@ -13,14 +13,26 @@ Steps:
 1. Agents and Subjects
 2. Archival Objects
 
-## Source data
+# Source data
 The adjoining scripts draw directly from the Google sheets containing the
 metadata.
 
-# Archival Object records
+## Archival Object records
 YWCA microfilm archival object mapping and metadata
 https://docs.google.com/spreadsheets/d/1L-AB2rEeni0r2YC_PqdBr90bvScXXFA_DFBJJyX4L3M/edit#gid=376449136
 
-# Subjects and Agent records
+## Subjects and Agent records
 YWCA microfilm subjects and agents
 https://docs.google.com/spreadsheets/d/1LKNioJOt279PpMGdRGWSErvwWSt9GadV4ejcK_rFK3o/edit#gid=0
+
+# Usage
+## Dependencies
+This code relies on the ArchivesSpace Python module also authored by yours truly.
+
+# Appendices
+## Quick reference
+ASpace API documentation
+https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
+
+ASpace object model schema documentation
+https://github.com/archivesspace/archivesspace/tree/master/common/schemas

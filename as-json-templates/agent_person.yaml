@@ -1,0 +1,21 @@
+jsonmodel_type: agent_person
+publish: true
+names:
+- jsonmodel_type: name_person
+  prefix: "{{ prefix }}"
+  primary_name: "{{ primary_part_of_name }}"
+  rest_of_name: "{{ rest_of_name }}"
+  dates: "{{ dates }}"
+  suffix: "{{ suffix }}"
+  source: "{{ source }}"
+  authority_id: "{{ authority_id }}"
+  rules: "{{ rules }}"
+  name_order: inverted
+  sort_name_auto_generate: true
+# Not doing this for now
+# dates_of_existence:
+# - jsonmodel_type: date
+#   date_type: inclusive
+#   expression: {{ dates }}
+#   label: existence
+# title: "{{ title }}"
