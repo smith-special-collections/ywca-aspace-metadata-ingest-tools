@@ -1,10 +1,21 @@
 from archivesspace import archivesspace
 from googlecsv import googlecsv
 from sheetprocessor import SheetProcessor
-import jsonfieldmapper as jfm
 import uuid
 import logging
 import pprint
+
+import jinja2
+from yaml import load, dump
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+import pprint
+import json
+
+DRY_RUN = False
+DEBUG_MODE = False
 
 # Set up logging
 import datetime
@@ -14,42 +25,46 @@ logging.basicConfig(format='%(levelname)s|%(asctime)s|%(message)s', level=loggin
 logging.getLogger("requests").setLevel(logging.WARNING) # Suppress oververbosity of requests logging
 logging.getLogger("urllib3").setLevel(logging.WARNING) # Same for urllib3 used by requests
 
-# Connect to ArchivesSpace
-aspace = archivesspace.ArchivesSpace('http', 'localhost', '8089', 'tchambers', 'sctchambers')
-aspace.connect()
+# Set up jinja loader and template objects
+templateLoader = jinja2.FileSystemLoader( searchpath="." )
+templateEnv = jinja2.Environment( loader=templateLoader )
 
-def asImportRecord(row, path='', mapping={}):
+# Connect to ArchivesSpace
+if DRY_RUN is not True:
+    aspace = archivesspace.ArchivesSpace('http', 'localhost', '8089', 'tchambers', 'sctchambers')
+    aspace.connect()
+else:
+    logging.error('DRY RUN')
+
+def asImportRecord(row, apiPath='', mapping=''):
     """This is the callback function to be run by the sheet processor on each row."""
-    # Run the magic sauce to make the mappings pull from the input row from the csv
-    jfm.setSourceRecord(row['data'])
+    # load the jinja template
+    template = templateEnv.get_template( mapping )
+    # run the templater, merging the data into the template
+    merged_data_yaml = template.render( row['data'] )
+    # convert the yaml format data into real python data
+    asRecordDataStruct = load(merged_data_yaml, Loader=Loader)
     try:
         # The actual request to ASpace
-        response = aspace.requestPost(path, requestData=mapping)
-        logging.info('Imported record |%s| with data |%s| with response |%s| creating new location|%s' % (row['id'], mapping, response, response['uri']))
+        if DRY_RUN is not True:
+            response = aspace.requestPost(apiPath, requestData=asRecordDataStruct)
+            logging.info('Imported record |%s| with data |%s| with response |%s| creating new location|%s' % (row['id'], asRecordDataStruct, response, response['uri']))
+        else:
+            logging.error('DRY RUN not querying %s with data: %s' % (apiPath, asRecordDataStruct))
+            pass
     except Exception as e:
         # If something goes wrong log it
-        logging.error('Failed record ' + str(row['id']) + ': ' + pprint.pformat(mapping))
+        #logging.error('Failed record ' + str(row['id']) + ': ' + pprint.pformat(asRecordDataStruct))
         raise e
 
-class SortName(jfm.JsonMappingObject):
-    """Create custom mapping for a sortname field. Takes an array of csv sheet field names."""
-    def renderValue(self):
-        if jfm.JsonMappingObject.sourceRecord is not None:
-            sortName = ''
-            for myColumnName in self.value:
-                sortName = sortName + jfm.JsonMappingObject.sourceRecord[myColumnName] + '. '
-            return(sortName)
-        else:
-            return('')
-
-def importSheet(sheetUrl, path, mapping):
+def importSheet(sheetUrl, path, mapping, linestoskip=0, uniquecolumns=[]):
     # Open the Google sheet csv
     reader = googlecsv.getCsv(sheetUrl)
     # Initialize the sheet processor
-    sheet = SheetProcessor(reader, uniquecolumns=['authority id', 'batch id'], idcolumn='batch id')
-    # Apply the json mapping
-    aspace.setJsonSerializerDefault(jfm.customJsonSerial)
+    sheet = SheetProcessor(reader, uniquecolumns=uniquecolumns, idcolumn='batch_id')
     # Set debug mode on processor
-    sheet.debugMode = True
+    sheet.debugMode = DEBUG_MODE
+    # Skip however may lines at the beginning of the sheet
+    sheet.linesToSkip = linestoskip
     # Process the records
-    sheet.process(asImportRecord, path=path, mapping=mapping)
+    sheet.process(asImportRecord, apiPath=path, mapping=mapping)

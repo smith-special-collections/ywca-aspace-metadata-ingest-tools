@@ -1,0 +1,15 @@
+# TODO INCOMPLETE TODO
+jsonmodel_type: archival_object
+publish: {{ publish }}
+level: {{ level }}
+title: "{{ title }}"
+resource:
+  ref: {{ resource }}
+dates:
+- jsonmodel_type: date
+  label: {{ date_inclusive_label }}
+  expression: "{{ date_inclusive_expression }}"
+  date_type: {{ dates_inclusive_type }}
+  begin: "{{ dates_inclusive_start }}"
+  end: "{{ dates_inclusive_end }}"
+  certainty: "{{ dates_certainty }}"

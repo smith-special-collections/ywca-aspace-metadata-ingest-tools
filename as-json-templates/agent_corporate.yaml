@@ -1,0 +1,12 @@
+jsonmodel_type: agent_corporate_entity
+publish: true
+names:
+- jsonmodel_type: name_corporate_entity
+  primary_name: "{{ primary_part_of_name }}"
+  subordinate_name_1: "{{ subordinate_name_1 }}"
+  subordinate_name_2: "{{ subordinate_name_2 }}"
+  source: {{ source }}
+  authority_id: {{ authority_id }}
+  rules: {{ rules }}
+  sort_name: "{{ primary_part_of_name }}. {{ subordinate_name_1 }}. {{ subordinate_name_2 }}."
+#  sort_name_auto_generate: true
